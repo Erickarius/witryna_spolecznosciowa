@@ -1,12 +1,13 @@
 (function(){
   var jquery_version = '3.4.1';
-  var site_url = 'https://127.0.0.1:8000/';
+  var site_url = 'http://127.0.0.1:8000/';
   var static_url = site_url + 'static/';
   var min_width = 100;
   var min_height = 100;
 
   function bookmarklet(msg) {
-    // load CSS
+    // To jest miejsce na rzeczywisty kod bookmarkletu.
+    // Wczytanie stylów CSS.
     var css = jQuery('<link>');
     css.attr({
       rel: 'stylesheet',
@@ -15,15 +16,15 @@
     });
     jQuery('head').append(css);
 
-    // load HTML
+    // Wczytanie kodu html
     box_html = '<div id="bookmarklet"><a href="#" id="close">&times;</a><h1>Select an image to bookmark:</h1><div class="images"></div></div>';
     jQuery('body').append(box_html);
 
-    // close event
+    // Zdarzenie close
     jQuery('#bookmarklet #close').click(function(){
        jQuery('#bookmarklet').remove();
     });
-    // find images and display them
+    // Wyszukiwanie obraózw i ich wyświetlanie
     jQuery.each(jQuery('img[src$="jpg"]'), function(index, image) {
       if (jQuery(image).width() >= min_width && jQuery(image).height()
       >= min_height)
@@ -34,12 +35,12 @@
       }
     });
 
-    // when an image is selected open URL with it
+    // Po zaznaczeniu obrazu przejdź pod podany adres URL wraz z obrazem
     jQuery('#bookmarklet .images a').click(function(e){
       selected_image = jQuery(this).children('img').attr('src');
-      // hide bookmarklet
+      // Ukrycie bookmarkletu.
       jQuery('#bookmarklet').hide();
-      // open new window to submit the image
+      // Otworzenie nowego okna w celu przekazania obrazu.
       window.open(site_url +'images/create/?url='
                   + encodeURIComponent(selected_image)
                   + '&title='
@@ -49,28 +50,28 @@
 
   };
 
-  // Check if jQuery is loaded
+  // Sprawdzanie, czy biblioteka jQuery zostałą wczytana.
   if(typeof window.jQuery != 'undefined') {
     bookmarklet();
   } else {
-    // Check for conflicts
+    // Sprawdzanie pod kątem konfliktów.
     var conflict = typeof window.$ != 'undefined';
-    // Create the script and point to Google API
+    // utworzenie skryptu i wskazanie Google API
     var script = document.createElement('script');
     script.src = '//ajax.googleapis.com/ajax/libs/jquery/' +
       jquery_version + '/jquery.min.js';
-    // Add the script to the 'head' for processing
+    // Dodanie znacznicka skryptu do znacznika <head> w celu przetworzenia.
     document.head.appendChild(script);
-    // Create a way to wait until script loading
+    // Mechanizm pozwalający na zaczekanie aż do zakońćzenia wczytywania skryptu.
     var attempts = 15;
     (function(){
-      // Check again if jQuery is undefined
+      // Ponownie sprawdzamy, czy zdefiniowowano jQuery.
       if(typeof window.jQuery == 'undefined') {
         if(--attempts > 0) {
-          // Calls himself in a few milliseconds
+          // Wywołanie skryptu w ciągu kilku milisekund.
           window.setTimeout(arguments.callee, 250)
         } else {
-          // Too much attempts to load, send error
+          // Zbyt wiele prób wczytania, zgłoszenie błędu.
           alert('An error occurred while loading jQuery')
         }
       } else {
