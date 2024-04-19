@@ -7,10 +7,12 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from common.decorators import ajax_required
+from actions.utils import create_action
 from actions.models import Action
 from .models import Profile, Contact
 from .forms import LoginForm, UserRegistrationForm, \
                    UserEditForm, ProfileEditForm
+
 
 
 # Create your views here.
