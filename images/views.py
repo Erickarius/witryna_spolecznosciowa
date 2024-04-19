@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, \
                                   PageNotAnInteger
 from common.decorators import ajax_required
+from actions.utils import create_action
 from .forms import ImageCreateForm
 from .models import Image
 
@@ -26,6 +27,7 @@ def image_create(request):
             # Przypisanie bieżącego użytkownika do elementu.
             new_item.user = request.user
             new_item.save()
+            create_action(request.user, 'dodał obraz', new_item)
             messages.success(request, 'Obraz został dodany')
 
             # Przekierowanie do widoku szczegółowego dla nowo utworzonego elementu
@@ -58,12 +60,13 @@ def image_like(request):
             image = Image.objects.get(id=image_id)
             if action == 'like':
                 image.users_like.add(request.user)
+                create_action(request.user, 'polubił', image)
             else:
                 image.users_like.remove(request.user)
             return JsonResponse({'status':'ok'})
         except:
             pass
-    return JsonResponse({'status':'ok'})
+    return JsonResponse({'status':'error'})
 
 @login_required
 def image_list(request):

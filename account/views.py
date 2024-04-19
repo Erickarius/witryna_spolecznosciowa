@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from common.decorators import ajax_required
+from actions.models import Action
 from .models import Profile, Contact
 from .forms import LoginForm, UserRegistrationForm, \
                    UserEditForm, ProfileEditForm
@@ -54,6 +55,7 @@ def register(request):
             new_user.save()
             # Utworzenie profilu użytkownika
             Profile.objects.create(user=new_user)
+            create_action(new_user, 'utworzył konto')
             return render(request,
                           'account/register_done.html',
                           {'new_user': new_user})
@@ -116,7 +118,7 @@ def user_follow(request):
             if action == 'follow':
                 Contact.objects.get_or_create(user_from=request.user,
                                               user_to=user)
-                create_action(request.user, 'is following', user)
+                create_action(request.user, 'obserwuje', user)
             else:
                 Contact.objects.filter(user_from=request.user,
                                        user_to=user).delete()
